@@ -20,55 +20,49 @@ export const signUpWithUsernameAndPassword = async (parameters: {
   username: string;
   password: string;
 }): Promise<SignUpWithUsernameAndPasswordResult> => {
-  try {
-    const existingUser = await prisma.user.findUnique({
-      where: {
-        username: parameters.username,
-      },
-    });
+  const existingUser = await prisma.user.findUnique({
+    where: {
+      username: parameters.username,
+    },
+  });
 
-    if (existingUser) {
-      throw SignUpWithUsernameAndPasswordError.CONFLICTING_USERNAME;
-    }
-    const passwordHash = createPasswordHash({
-      password: parameters.password,
-    });
-    const user = await prisma.user.create({
-      data: {
-        username: parameters.username,
-        password: passwordHash,
-      },
-    });
-    const JwtPayload: jwt.JwtPayload = {
-      iss: "atchutha57@gmail.com",
-      sub: user!.id,
-      username: user!.username,
-    };
-    const token = jwt.sign(JwtPayload, jwtSecretKey, {
-      expiresIn: "30d",
-    });
-
-    const result: SignUpWithUsernameAndPasswordResult = {
-      token,
-      user,
-    };
-    return result;
-  } catch (e) {
-    console.log("error", e);
-    throw SignUpWithUsernameAndPasswordError.UNKNOWN;
+  if (existingUser) {
+    throw SignUpWithUsernameAndPasswordError.CONFLICTING_USERNAME;
   }
+  const passwordHash = createPasswordHash({
+    password: parameters.password,
+  });
+  const user = await prisma.user.create({
+    data: {
+      username: parameters.username,
+      password: passwordHash,
+    },
+  });
+  const JwtPayload: jwt.JwtPayload = {
+    iss: "atchutha57@gmail.com",
+    sub: user!.id,
+    username: user!.username,
+  };
+  const token = jwt.sign(JwtPayload, jwtSecretKey, {
+    expiresIn: "30d",
+  });
+
+  const result: SignUpWithUsernameAndPasswordResult = {
+    token,
+    user,
+  };
+  return result;
 };
 
 export const LogInWithUsernameAndPassword = async (parameters: {
   username: string;
   password: string;
 }): Promise<LogInWithUsernameAndPasswordResult> => {
-  //1. create password hash
+  //creating a password hash
   const passwordHash = createPasswordHash({
     password: parameters.password,
   });
 
-  //2.find the user with username and password
   const user = await prisma.user.findUnique({
     where: {
       username: parameters.username,
@@ -76,12 +70,10 @@ export const LogInWithUsernameAndPassword = async (parameters: {
     },
   });
 
- 
   if (!user) {
     throw LogInWithUsernameAndPasswordError.INCORRECT_USERNAME_OR_PASSWORD;
   }
 
-  
   const JwtPayload: jwt.JwtPayload = {
     iss: "atchutha57@gmail.com",
     sub: user.id,
