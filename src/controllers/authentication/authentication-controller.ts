@@ -54,3 +54,37 @@ export const signUpWithUsernameAndPassword = async (parameters: {
   return result;
 };
 
+export const LogInWithUsernameAndPassword = async (parameters: {
+  username: string;
+  password: string;
+}): Promise<LogInWithUsernameAndPasswordResult> => {
+  //creating a password hash
+  const passwordHash = createPasswordHash({
+    password: parameters.password,
+  });
+
+  const user = await prisma.user.findUnique({
+    where: {
+      username: parameters.username,
+      password: passwordHash,
+    },
+  });
+
+  if (!user) {
+    throw LogInWithUsernameAndPasswordError.INCORRECT_USERNAME_OR_PASSWORD;
+  }
+
+  const JwtPayload: jwt.JwtPayload = {
+    iss: "atchutha57@gmail.com",
+    sub: user.id,
+    username: user.username,
+  };
+  const token = jwt.sign(JwtPayload, jwtSecretKey, {
+    expiresIn: "30d",
+  });
+
+  return {
+    token,
+    user,
+  };
+};
