@@ -15,4 +15,5 @@ export type GetUsersResult = {
 
 export enum GetUsersError {
   NO_USERS,
+  UNKNOWN,
 }

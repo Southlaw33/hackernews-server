@@ -6,6 +6,7 @@ import { tokenMiddleWare } from "./middlewares/token-middleware";
 import { GetMeError, GetUsersError } from "../controllers/users/user-types";
 import { getMe, getUsers } from "../controllers/users/user-controllers";
 
+import { paginate } from "./pagination";
 export const users = new Hono();
 users.get("/me", tokenMiddleWare, async (context) => {
   const userId = context.get("userId");
@@ -41,22 +42,22 @@ users.get("/me", tokenMiddleWare, async (context) => {
 });
 
 // /users
-users.get("", tokenMiddleWare, async (context) => {
+users.get("/", tokenMiddleWare, async (context) => {
   try {
-    const users = await getUsers();
+    const page = parseInt(context.req.query("page") || "1", 10);
+    const limit = parseInt(context.req.query("limit") || "2", 10);
+    const result = await getUsers({ page, limit });
 
-    return context.json(
-      {
-        data: users,
-      },
-      200
-    );
-  } catch (e) {
-    return context.json(
-      {
-        message: "Internal Server Error",
-      },
-      500
-    );
+    if (!result) {
+      return context.json({ error: "Users not found" }, 404);
+    }
+    return context.json(result, 200);
+  } catch (error) {
+    if (error === GetUsersError.NO_USERS) {
+      return context.json({ error: "Users not found" }, 404);
+    }
+    if (error === GetUsersError.UNKNOWN) {
+      return context.json({ error: "Unknown error" }, 500);
+    }
   }
 });

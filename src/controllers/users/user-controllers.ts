@@ -1,4 +1,5 @@
 import { prisma } from "../../extras/prisma";
+import { paginate } from "../../routes/pagination";
 import {
   GetMeError,
   GetUsersError,
@@ -24,12 +25,26 @@ export const getMe = async (parameters: {
   };
 };
 
-export const getUsers = async (): Promise<GetUsersResult> => {
-  const users = await prisma.user.findMany();
-  if (!users) {
-    throw GetUsersError.NO_USERS;
+export const getUsers = async (parameter: {
+  page: number;
+  limit: number;
+}): Promise<GetUsersResult> => {
+  try {
+    const { skip, take } = paginate(parameter.page, parameter.limit);
+
+    const users = await prisma.user.findMany({
+      orderBy: { name: "asc" },
+      skip,
+      take,
+    });
+
+    if (!users || users.length === 0) {
+      throw GetUsersError.NO_USERS;
+    }
+
+    return { users };
+  } catch (e) {
+    console.error(e);
+    throw GetUsersError.UNKNOWN;
   }
-  return {
-    users,
-  };
 };
