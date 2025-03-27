@@ -1,8 +1,9 @@
 import type { Like } from "@prisma/client";
 import { paginate } from "../../routes/pagination";
 import { prisma } from "../../extras/prisma";
-import { LikePostError, type LikePostResult } from "./like-types";
+import { GetLikesError, LikePostError, type GetLikesResult, type LikePostResult } from "./like-types";
 
+//LIKE A POST
 export const likePost = async (parameters: {
   userId: string;
   postId: string;
@@ -36,4 +37,29 @@ export const likePost = async (parameters: {
   });
 
   return { like };
+};
+
+export const getLikesOnPost = async (parameters: {
+  postId: string;
+  page?: number;
+  limit?: number;
+}): Promise<GetLikesResult> => {
+  const { postId, page = 1, limit = 10 } = parameters;
+
+  const post = await prisma.post.findUnique({
+    where: { postId },
+  });
+
+  if (!post) {
+    throw GetLikesError.POST_NOT_FOUND;
+  }
+
+  const likes = await prisma.like.findMany({
+    where: { postId },
+    orderBy: { likedAt: "desc" }, // Reverse chronological order
+    skip: (page - 1) * limit,
+    take: limit,
+  });
+
+  return { likes };
 };

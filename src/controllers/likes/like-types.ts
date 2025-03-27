@@ -9,3 +9,12 @@ export enum LikePostError {
   ALREADY_LIKED,
   UNKNOWN,
 }
+
+export type GetLikesResult = {
+  likes: Like[];
+};
+
+export enum GetLikesError {
+  POST_NOT_FOUND,
+  UNKNOWN,
+}
