@@ -33,7 +33,7 @@ model Post {
 }
 
 model Like {
-  likeid  String   @id
+  likeId  String   @id @default(cuid())
   postId  String
   userId  String
   likedAt DateTime @default(now())
@@ -42,7 +42,7 @@ model Like {
 }
 
 model Comment {
-  id        String   @id @default(cuid())
+  commentId String   @id @default(cuid())
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

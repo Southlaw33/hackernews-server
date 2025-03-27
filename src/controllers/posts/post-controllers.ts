@@ -10,6 +10,7 @@ import {
   type DeletePostResult,
 } from "./post-types";
 
+//controller for creating a post
 export const createPost = async (parameters: {
   userId: string;
   title: string;
@@ -34,6 +35,7 @@ export const createPost = async (parameters: {
   return { post };
 };
 
+//controller for getting my posts
 export const getMyPosts = async (parameters: {
   userId: string;
   page?: number;
@@ -63,6 +65,7 @@ export const getMyPosts = async (parameters: {
   };
 };
 
+//controller for getting all posts
 export const getAllPosts = async (parameters: {
   page?: number;
   limit?: number;
@@ -78,6 +81,7 @@ export const getAllPosts = async (parameters: {
   return { posts };
 };
 
+//controller to delete a post based on its id
 export const deletePost = async (parameters: {
   userId: string;
   postId: string;

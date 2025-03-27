@@ -6,12 +6,15 @@ import jwt from "jsonwebtoken";
 import { jwtSecretKey } from "../../environment";
 import { logger } from "hono/logger";
 import { postRoute } from "./post-routes";
+import { likePost } from "../controllers/likes/like-controllers";
+import { likeRoute } from "./like-routes";
 
 export const allRoutes = new Hono();
 
 allRoutes.route("/authentication", authenticationRoutes);
 allRoutes.route("users", users);
-allRoutes.route("/posts", postRoute)
+allRoutes.route("/posts", postRoute);
+allRoutes.route("/likes", likeRoute);
 allRoutes.use(logger());
 
 allRoutes.get("/health", (context) => {
