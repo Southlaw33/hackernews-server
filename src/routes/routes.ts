@@ -8,6 +8,7 @@ import { logger } from "hono/logger";
 import { postRoute } from "./post-routes";
 import { likePost } from "../controllers/likes/like-controllers";
 import { likeRoute } from "./like-routes";
+import { commentRoute } from "./comment-routes";
 
 export const allRoutes = new Hono();
 
@@ -15,6 +16,7 @@ allRoutes.route("/authentication", authenticationRoutes);
 allRoutes.route("users", users);
 allRoutes.route("/posts", postRoute);
 allRoutes.route("/likes", likeRoute);
+allRoutes.route("/comments", commentRoute);
 allRoutes.use(logger());
 
 allRoutes.get("/health", (context) => {

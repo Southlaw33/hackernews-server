@@ -18,7 +18,14 @@ export const likeRoute = new Hono();
 likeRoute.post("/on/:postId", tokenMiddleWare, async (c) => {
   const userId = c.get("userId");
   const postId = c.req.param("postId");
-
+  if (!userId) {
+    return c.json(
+      {
+        message: "Unauthorized",
+      },
+      401
+    );
+  }
   try {
     const result = await likePost({ userId, postId });
 
@@ -94,7 +101,14 @@ likeRoute.get("/on/:postId", async (c) => {
 likeRoute.delete("/on/:postId", tokenMiddleWare, async (c) => {
   const userId = c.get("userId");
   const postId = c.req.param("postId");
-
+  if (!userId) {
+    return c.json(
+      {
+        message: "Unauthorized",
+      },
+      401
+    );
+  }
   try {
     const result = await deleteLike({ userId, postId });
 
