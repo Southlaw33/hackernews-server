@@ -18,3 +18,13 @@ export enum GetLikesError {
   POST_NOT_FOUND,
   UNKNOWN,
 }
+
+export type DeleteLikeResult = {
+  success: boolean;
+};
+
+export enum DeleteLikeError {
+  POST_NOT_FOUND,
+  LIKE_NOT_FOUND,
+  UNKNOWN,
+}

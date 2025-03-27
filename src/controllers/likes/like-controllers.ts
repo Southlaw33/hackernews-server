@@ -1,9 +1,16 @@
 import type { Like } from "@prisma/client";
 import { paginate } from "../../routes/pagination";
 import { prisma } from "../../extras/prisma";
-import { GetLikesError, LikePostError, type GetLikesResult, type LikePostResult } from "./like-types";
+import {
+  DeleteLikeError,
+  GetLikesError,
+  LikePostError,
+  type DeleteLikeResult,
+  type GetLikesResult,
+  type LikePostResult,
+} from "./like-types";
 
-//LIKE A POST
+//like a post
 export const likePost = async (parameters: {
   userId: string;
   postId: string;
@@ -39,6 +46,7 @@ export const likePost = async (parameters: {
   return { like };
 };
 
+//get all likes on a post in reverse chronological order
 export const getLikesOnPost = async (parameters: {
   postId: string;
   page?: number;
@@ -62,4 +70,37 @@ export const getLikesOnPost = async (parameters: {
   });
 
   return { likes };
+};
+
+//Delete a like (or can be dislike)
+export const deleteLike = async (parameters: {
+  userId: string;
+  postId: string;
+}): Promise<DeleteLikeResult> => {
+  const { userId, postId } = parameters;
+
+  const post = await prisma.post.findUnique({
+    where: { postId },
+  });
+
+  if (!post) {
+    throw DeleteLikeError.POST_NOT_FOUND;
+  }
+
+  const like = await prisma.like.findFirst({
+    where: {
+      postId,
+      userId,
+    },
+  });
+
+  if (!like) {
+    throw DeleteLikeError.LIKE_NOT_FOUND;
+  }
+
+  await prisma.like.delete({
+    where: { likeId: like.likeId },
+  });
+
+  return { success: true };
 };
