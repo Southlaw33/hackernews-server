@@ -1,8 +1,8 @@
 import type { Post } from "@prisma/client";
 
 export type GetPostResult = {
-  post: Post;
-};
+    posts: Post[]; // Changed `post` to `posts`
+  };
 
 export enum GetPostError {
   USER_NOT_FOUND,

@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import { prisma } from "../extras/prisma";
 
-import { createPost } from "../controllers/posts/post-controllers";
-import { CreatePostError } from "../controllers/posts/post-types";
+import { createPost, getMyPosts } from "../controllers/posts/post-controllers";
+import { CreatePostError, GetPostError } from "../controllers/posts/post-types";
 import { tokenMiddleWare } from "./middlewares/token-middleware";
 
 export const postRoute = new Hono();
@@ -47,6 +47,43 @@ postRoute.post("/", tokenMiddleWare, async (c) => {
     return c.json(
       {
         message: " THis a Server error",
+      },
+      500
+    );
+  }
+});
+
+postRoute.get("/me", tokenMiddleWare, async (context) => {
+  const userId = context.get("userId");
+  const page = context.req.query("page");
+  const limit = context.req.query("limit");
+
+  try {
+    const result = await getMyPosts({
+      userId,
+      page: page ? parseInt(page, 10) : 1,
+      limit: limit ? parseInt(limit, 10) : 10,
+    });
+
+    return context.json(
+      {
+        data: result,
+      },
+      200
+    );
+  } catch (e) {
+    if (e === GetPostError.USER_NOT_FOUND) {
+      return context.json(
+        {
+          error: "User not found",
+        },
+        400
+      );
+    }
+
+    return context.json(
+      {
+        message: "Internal Server Error",
       },
       500
     );
