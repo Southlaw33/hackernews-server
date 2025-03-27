@@ -5,6 +5,17 @@ export type GetPostResult = {
 };
 
 export enum GetPostError {
-  POST_NOT_FOUND,
+  USER_NOT_FOUND,
+  CONFLICTING_TITLE,
+  UNKNOWN,
+}
+
+export type CreatePostResult = {
+  post: Post;
+};
+
+export enum CreatePostError {
+  USER_NOT_FOUND,
+  CONFLICTING_TITLE,
   UNKNOWN,
 }

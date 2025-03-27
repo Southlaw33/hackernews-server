@@ -21,12 +21,13 @@ model User {
 }
 
 model Post {
-  title       String    @unique
+  title       String
   description String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   postId      String    @id @default(cuid())
-  userId      User      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userid      String
+  userId      User      @relation(fields: [userid], references: [id], onDelete: Cascade)
   Like        Like[]
   Comment     Comment[]
 }
