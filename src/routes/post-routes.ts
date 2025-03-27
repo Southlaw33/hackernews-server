@@ -3,10 +3,15 @@ import { prisma } from "../extras/prisma";
 
 import {
   createPost,
+  deletePost,
   getAllPosts,
   getMyPosts,
 } from "../controllers/posts/post-controllers";
-import { CreatePostError, GetPostError } from "../controllers/posts/post-types";
+import {
+  CreatePostError,
+  DeletePostError,
+  GetPostError,
+} from "../controllers/posts/post-types";
 import { tokenMiddleWare } from "./middlewares/token-middleware";
 
 export const postRoute = new Hono();
@@ -57,6 +62,7 @@ postRoute.post("/", tokenMiddleWare, async (c) => {
   }
 });
 
+//get all posts by me in reverse chronological order
 postRoute.get("/me", tokenMiddleWare, async (c) => {
   const userId = c.get("userId");
   const page = c.req.query("page");
@@ -94,6 +100,7 @@ postRoute.get("/me", tokenMiddleWare, async (c) => {
   }
 });
 
+//get all posts in descending order (reverse chronoclogical order)
 postRoute.get("/all", tokenMiddleWare, async (c) => {
   try {
     const page = parseInt(c.req.query("page") || "1", 10);
@@ -105,5 +112,46 @@ postRoute.get("/all", tokenMiddleWare, async (c) => {
     return c.json({ data: allPosts }, 200);
   } catch (e) {
     return c.json({ error: e }, 500);
+  }
+});
+
+postRoute.delete("/:postId", tokenMiddleWare, async (c) => {
+  const userId = c.get("userId");
+  const postId = c.req.param("postId");
+
+  try {
+    const result = await deletePost({ userId, postId });
+
+    return c.json(
+      {
+        success: result.success,
+      },
+      200
+    );
+  } catch (e) {
+    if (e === DeletePostError.POST_NOT_FOUND) {
+      return c.json(
+        {
+          error: "Post not found",
+        },
+        404
+      );
+    }
+
+    if (e === DeletePostError.UNAUTHORIZED) {
+      return c.json(
+        {
+          error: "Unauthorized to delete this post",
+        },
+        403
+      );
+    }
+
+    return c.json(
+      {
+        message: "Internal Server Error",
+      },
+      500
+    );
   }
 });

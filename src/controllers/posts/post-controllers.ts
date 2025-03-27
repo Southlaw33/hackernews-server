@@ -4,8 +4,10 @@ import { paginate } from "../../routes/pagination";
 import {
   GetPostError,
   CreatePostError,
+  DeletePostError,
   type CreatePostResult,
   type GetPostResult,
+  type DeletePostResult,
 } from "./post-types";
 
 export const createPost = async (parameters: {
@@ -74,4 +76,29 @@ export const getAllPosts = async (parameters: {
   });
 
   return { posts };
+};
+
+export const deletePost = async (parameters: {
+  userId: string;
+  postId: string;
+}): Promise<DeletePostResult> => {
+  const { userId, postId } = parameters;
+
+  const post = await prisma.post.findUnique({
+    where: { postId },
+  });
+
+  if (!post) {
+    throw DeletePostError.POST_NOT_FOUND;
+  }
+
+  if (post.userid !== userId) {
+    throw DeletePostError.UNAUTHORIZED;
+  }
+
+  await prisma.post.delete({
+    where: { postId },
+  });
+
+  return { success: true };
 };
