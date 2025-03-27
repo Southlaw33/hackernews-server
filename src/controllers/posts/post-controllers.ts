@@ -60,3 +60,18 @@ export const getMyPosts = async (parameters: {
     posts,
   };
 };
+
+export const getAllPosts = async (parameters: {
+  page?: number;
+  limit?: number;
+}): Promise<GetPostResult> => {
+  const { page = 1, limit = 10 } = parameters;
+
+  const posts = await prisma.post.findMany({
+    orderBy: { createdAt: "desc" }, // Reverse chronological order
+    skip: (page - 1) * limit,
+    take: limit,
+  });
+
+  return { posts };
+};

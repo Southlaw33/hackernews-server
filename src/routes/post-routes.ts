@@ -1,7 +1,11 @@
 import { Hono } from "hono";
 import { prisma } from "../extras/prisma";
 
-import { createPost, getMyPosts } from "../controllers/posts/post-controllers";
+import {
+  createPost,
+  getAllPosts,
+  getMyPosts,
+} from "../controllers/posts/post-controllers";
 import { CreatePostError, GetPostError } from "../controllers/posts/post-types";
 import { tokenMiddleWare } from "./middlewares/token-middleware";
 
@@ -53,10 +57,10 @@ postRoute.post("/", tokenMiddleWare, async (c) => {
   }
 });
 
-postRoute.get("/me", tokenMiddleWare, async (context) => {
-  const userId = context.get("userId");
-  const page = context.req.query("page");
-  const limit = context.req.query("limit");
+postRoute.get("/me", tokenMiddleWare, async (c) => {
+  const userId = c.get("userId");
+  const page = c.req.query("page");
+  const limit = c.req.query("limit");
 
   try {
     const result = await getMyPosts({
@@ -65,7 +69,7 @@ postRoute.get("/me", tokenMiddleWare, async (context) => {
       limit: limit ? parseInt(limit, 10) : 10,
     });
 
-    return context.json(
+    return c.json(
       {
         data: result,
       },
@@ -73,7 +77,7 @@ postRoute.get("/me", tokenMiddleWare, async (context) => {
     );
   } catch (e) {
     if (e === GetPostError.USER_NOT_FOUND) {
-      return context.json(
+      return c.json(
         {
           error: "User not found",
         },
@@ -81,11 +85,25 @@ postRoute.get("/me", tokenMiddleWare, async (context) => {
       );
     }
 
-    return context.json(
+    return c.json(
       {
         message: "Internal Server Error",
       },
       500
     );
+  }
+});
+
+postRoute.get("/all", tokenMiddleWare, async (c) => {
+  try {
+    const page = parseInt(c.req.query("page") || "1", 10);
+    const limit = parseInt(c.req.query("limit") || "2", 10);
+    const allPosts = await getAllPosts({ page, limit });
+    if (!allPosts) {
+      return c.json({ error: "No posts found" }, 404);
+    }
+    return c.json({ data: allPosts }, 200);
+  } catch (e) {
+    return c.json({ error: e }, 500);
   }
 });
