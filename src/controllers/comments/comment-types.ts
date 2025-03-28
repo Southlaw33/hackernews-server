@@ -34,3 +34,18 @@ export enum DeleteCommentError {
   UNAUTHORIZED,
   UNKNOWN,
 }
+
+export type UpdateCommentResult = {
+  success: boolean;
+  updatedComment: {
+    commentId: string;
+    content: string;
+    updatedAt: Date;
+  };
+};
+
+export enum UpdateCommentError {
+  COMMENT_NOT_FOUND,
+  UNAUTHORIZED,
+  UNKNOWN,
+}

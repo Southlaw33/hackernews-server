@@ -3,9 +3,11 @@ import {
   CreateCommentError,
   DeleteCommentError,
   GetCommentsError,
+  UpdateCommentError,
   type CreateCommentResult,
   type DeleteCommentResult,
   type GetCommentsResult,
+  type UpdateCommentResult,
 } from "./comment-types";
 import { prisma } from "../../extras/prisma";
 
@@ -97,4 +99,39 @@ export const deleteComment = async (parameters: {
   });
 
   return { success: true };
+};
+
+//controller to update a comment
+export const updateComment = async (parameters: {
+  userId: string;
+  commentId: string;
+  content: string;
+}): Promise<UpdateCommentResult> => {
+  const { userId, commentId, content } = parameters;
+
+  const comment = await prisma.comment.findUnique({
+    where: { commentId: commentId },
+  });
+
+  if (!comment) {
+    throw UpdateCommentError.COMMENT_NOT_FOUND;
+  }
+
+  if (comment.userId !== userId) {
+    throw UpdateCommentError.UNAUTHORIZED;
+  }
+
+  const updatedComment = await prisma.comment.update({
+    where: { commentId: commentId },
+    data: { content, updatedAt: new Date() },
+  });
+
+  return {
+    success: true,
+    updatedComment: {
+      commentId: updatedComment.commentId,
+      content: updatedComment.content,
+      updatedAt: updatedComment.updatedAt,
+    },
+  };
 };

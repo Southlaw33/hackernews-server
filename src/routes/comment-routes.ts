@@ -6,11 +6,13 @@ import {
   createComment,
   deleteComment,
   getCommentsOnPost,
+  updateComment,
 } from "../controllers/comments/comment-controllers";
 import {
   CreateCommentError,
   DeleteCommentError,
   GetCommentsError,
+  UpdateCommentError,
   type CreateCommentResult,
 } from "../controllers/comments/comment-types";
 import { tokenMiddleWare } from "./middlewares/token-middleware";
@@ -110,6 +112,49 @@ commentRoute.delete("/:commentId", tokenMiddleWare, async (c) => {
       return c.json(
         {
           error: "Unauthorized: You can only delete your own comments",
+        },
+        403
+      );
+    }
+
+    return c.json(
+      {
+        message: "Internal Server Error",
+      },
+      500
+    );
+  }
+});
+
+//route to update a particular comment
+commentRoute.patch("/:commentId", tokenMiddleWare, async (c) => {
+  const userId = c.get("userId");
+  const commentId = c.req.param("commentId");
+  const { content } = await c.req.json();
+
+  try {
+    const result = await updateComment({ userId, commentId, content });
+
+    return c.json(
+      {
+        data: result,
+      },
+      200
+    );
+  } catch (e) {
+    if (e === UpdateCommentError.COMMENT_NOT_FOUND) {
+      return c.json(
+        {
+          error: "Comment not found",
+        },
+        404
+      );
+    }
+
+    if (e === UpdateCommentError.UNAUTHORIZED) {
+      return c.json(
+        {
+          error: "Unauthorized: You can only update your own comments",
         },
         403
       );
