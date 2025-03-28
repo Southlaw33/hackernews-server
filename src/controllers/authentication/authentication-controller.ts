@@ -16,6 +16,7 @@ const createPasswordHash = (parameters: { password: string }): string => {
   return createHash("sha256").update(parameters.password).digest("hex");
 };
 
+//to sign up
 export const signUpWithUsernameAndPassword = async (parameters: {
   username: string;
   password: string;
@@ -54,6 +55,7 @@ export const signUpWithUsernameAndPassword = async (parameters: {
   return result;
 };
 
+//to login
 export const LogInWithUsernameAndPassword = async (parameters: {
   username: string;
   password: string;
