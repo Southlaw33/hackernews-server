@@ -24,3 +24,13 @@ export enum GetCommentsError {
   POST_NOT_FOUND,
   UNKNOWN,
 }
+
+export type DeleteCommentResult = {
+  success: boolean;
+};
+
+export enum DeleteCommentError {
+  COMMENT_NOT_FOUND,
+  UNAUTHORIZED,
+  UNKNOWN,
+}

@@ -1,8 +1,10 @@
 import type { Comment } from "@prisma/client";
 import {
   CreateCommentError,
+  DeleteCommentError,
   GetCommentsError,
   type CreateCommentResult,
+  type DeleteCommentResult,
   type GetCommentsResult,
 } from "./comment-types";
 import { prisma } from "../../extras/prisma";
@@ -68,4 +70,31 @@ export const getCommentsOnPost = async (parameters: {
       username: comment.user.username,
     })),
   };
+};
+
+//controller to delete a comment wrt the commentID
+export const deleteComment = async (parameters: {
+  userId: string;
+  commentId: string;
+}): Promise<DeleteCommentResult> => {
+  const { userId, commentId } = parameters;
+
+  const comment = await prisma.comment.findUnique({
+    where: { commentId: commentId },
+  });
+  //cjeck if comment is present
+
+  if (!comment) {
+    throw DeleteCommentError.COMMENT_NOT_FOUND;
+  }
+
+  if (comment.userId !== userId) {
+    throw DeleteCommentError.UNAUTHORIZED;
+  }
+
+  await prisma.comment.delete({
+    where: { commentId: commentId },
+  });
+
+  return { success: true };
 };

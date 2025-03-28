@@ -4,10 +4,12 @@ import { prisma } from "../extras/prisma";
 import { Hono } from "hono";
 import {
   createComment,
+  deleteComment,
   getCommentsOnPost,
 } from "../controllers/comments/comment-controllers";
 import {
   CreateCommentError,
+  DeleteCommentError,
   GetCommentsError,
   type CreateCommentResult,
 } from "../controllers/comments/comment-types";
@@ -80,3 +82,44 @@ commentRoute.get("/on/:postId", async (c) => {
   }
 });
 
+//route to delete a comment
+commentRoute.delete("/:commentId", tokenMiddleWare, async (c) => {
+  const userId = c.get("userId");
+  const commentId = c.req.param("commentId");
+
+  try {
+    const result = await deleteComment({ userId, commentId });
+
+    return c.json(
+      {
+        data: result,
+      },
+      200
+    );
+  } catch (e) {
+    if (e === DeleteCommentError.COMMENT_NOT_FOUND) {
+      return c.json(
+        {
+          error: "Comment not found",
+        },
+        404
+      );
+    }
+
+    if (e === DeleteCommentError.UNAUTHORIZED) {
+      return c.json(
+        {
+          error: "Unauthorized: You can only delete your own comments",
+        },
+        403
+      );
+    }
+
+    return c.json(
+      {
+        message: "Internal Server Error",
+      },
+      500
+    );
+  }
+});
