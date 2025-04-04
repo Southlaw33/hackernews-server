@@ -1,7 +1,11 @@
 import type { User } from "@prisma/client";
 import { Sign } from "crypto";
 import { createHash } from "crypto";
+<<<<<<< HEAD
 import { prisma } from "../../extras/prisma";
+=======
+import { prisma } from "../../extras/prisma.ts";
+>>>>>>> 702b18e165e7148aa41e79f52d35d77521481c19
 import {
   LogInWithUsernameAndPasswordError,
   SignUpWithUsernameAndPasswordError,
@@ -16,6 +20,10 @@ const createPasswordHash = (parameters: { password: string }): string => {
   return createHash("sha256").update(parameters.password).digest("hex");
 };
 
+<<<<<<< HEAD
+=======
+//to sign up
+>>>>>>> 702b18e165e7148aa41e79f52d35d77521481c19
 export const signUpWithUsernameAndPassword = async (parameters: {
   username: string;
   password: string;
@@ -54,6 +62,10 @@ export const signUpWithUsernameAndPassword = async (parameters: {
   return result;
 };
 
+<<<<<<< HEAD
+=======
+//to login
+>>>>>>> 702b18e165e7148aa41e79f52d35d77521481c19
 export const LogInWithUsernameAndPassword = async (parameters: {
   username: string;
   password: string;

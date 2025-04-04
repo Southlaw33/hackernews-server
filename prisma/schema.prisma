@@ -1,9 +1,12 @@
+<<<<<<< HEAD
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+=======
+>>>>>>> 702b18e165e7148aa41e79f52d35d77521481c19
 generator client {
   provider = "prisma-client-js"
 }
@@ -27,18 +30,31 @@ model User {
 }
 
 model Post {
+<<<<<<< HEAD
   title       String    @unique
+=======
+  title       String
+>>>>>>> 702b18e165e7148aa41e79f52d35d77521481c19
   description String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   postId      String    @id @default(cuid())
+<<<<<<< HEAD
   userId      User      @relation(fields: [postId], references: [id], onDelete: Cascade)
+=======
+  userid      String
+  userId      User      @relation(fields: [userid], references: [id], onDelete: Cascade)
+>>>>>>> 702b18e165e7148aa41e79f52d35d77521481c19
   Like        Like[]
   Comment     Comment[]
 }
 
 model Like {
+<<<<<<< HEAD
   likeid  String   @id
+=======
+  likeId  String   @id @default(cuid())
+>>>>>>> 702b18e165e7148aa41e79f52d35d77521481c19
   postId  String
   userId  String
   likedAt DateTime @default(now())
@@ -47,7 +63,11 @@ model Like {
 }
 
 model Comment {
+<<<<<<< HEAD
   id        String   @id @default(cuid())
+=======
+  commentId String   @id @default(cuid())
+>>>>>>> 702b18e165e7148aa41e79f52d35d77521481c19
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
