@@ -6,7 +6,7 @@ import {
   deleteComment,
   getAllComments,
   updateComment,
-} from "../controllers/comments/comment-controllers";
+} from "../controllers/comments/comment-controllers.js";
 
 export const commentRoutes = new Hono();
 

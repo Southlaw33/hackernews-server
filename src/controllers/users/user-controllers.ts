@@ -5,7 +5,7 @@ import {
   GetMeError,
   type GetAllUsersResult,
   type GetMeResult,
-} from "./user-types";
+} from "./user-types.js";
 
 export const GetMe = async (parameters: {
   userId: string;

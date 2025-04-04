@@ -4,7 +4,7 @@ import {
   CommentStatus,
   type CreatCommentResult,
   type CommentResult,
-} from "./comment-types";
+} from "./comment-types.js";
 
 export const createComment = async (params: {
   content: string;

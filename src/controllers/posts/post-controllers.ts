@@ -1,12 +1,12 @@
-import { getPagination } from "../../routes/pagination";
-import { prisma } from "../../extras/prisma";
+import { getPagination } from "../../routes/pagination.js";
+import { prisma } from "../../extras/prisma.js";
 import {
   DeletePostError,
   GetPostsError,
   PostStatus,
   type GetPostsResult,
   type PostCreateResult,
-} from "./post-types";
+} from "./post-types.js";
 
 export const createPost = async (parameters: {
   title: string;

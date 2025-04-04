@@ -10,7 +10,7 @@ import {
   DeletePostError,
   GetPostsError,
   PostStatus,
-} from "../controllers/posts/post-types";
+} from "../controllers/posts/post-types.js";
 
 export const postsRoutes = new Hono();
 postsRoutes.post("/", tokenMiddleWare, async (context) => {
