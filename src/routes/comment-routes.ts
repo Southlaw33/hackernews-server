@@ -1,6 +1,6 @@
 import { Hono } from "hono";
-import { CommentStatus } from "../controllers/comments/comment-types";
-import { tokenMiddleWare } from "../routes/middlewares/token-middleware";
+import { CommentStatus } from "../controllers/comments/comment-types.js";
+import { tokenMiddleWare } from "../routes/middlewares/token-middleware.js";
 import {
   createComment,
   deleteComment,
