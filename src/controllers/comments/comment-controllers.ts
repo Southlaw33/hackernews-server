@@ -1,5 +1,5 @@
-import { getPagination } from "../../routes/pagination";
-import { prisma } from "../../extras/prisma";
+import { getPagination } from "../../routes/pagination.js";
+import { prisma } from "../../extras/prisma.js";
 import {
   CommentStatus,
   type CreatCommentResult,
