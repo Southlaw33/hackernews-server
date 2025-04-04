@@ -1,137 +1,120 @@
-import type { Comment } from "@prisma/client";
-import {
-  CreateCommentError,
-  DeleteCommentError,
-  GetCommentsError,
-  UpdateCommentError,
-  type CreateCommentResult,
-  type DeleteCommentResult,
-  type GetCommentsResult,
-  type UpdateCommentResult,
-} from "./comment-types";
+import { getPagination } from "../../routes/pagination";
 import { prisma } from "../../extras/prisma";
+import {
+  CommentStatus,
+  type CreatCommentResult,
+  type CommentResult,
+} from "./comment-types";
 
-//controller to create a comment
-export const createComment = async (parameters: {
-  userId: string;
-  postId: string;
+export const createComment = async (params: {
   content: string;
-}): Promise<CreateCommentResult> => {
-  const { userId, postId, content } = parameters;
-  const post = await prisma.post.findUnique({ where: { postId } });
-  if (!post) {
-    throw CreateCommentError.POST_NOT_FOUND;
-  }
-  const comment = await prisma.comment.create({
-    data: {
-      userId,
-      postId,
-      content,
-    },
-  });
-  return {
-    commentId: comment.commentId,
-    content: comment.content,
-    createdAt: comment.createdAt,
-  };
-};
-
-//controller to get all the comments on a post in reverese chronological order
-export const getCommentsOnPost = async (parameters: {
   postId: string;
-  page?: number;
-  limit?: number;
-}): Promise<GetCommentsResult> => {
-  const { postId, page = 1, limit = 10 } = parameters;
+  userId: string;
+}): Promise<CreatCommentResult> => {
+  try {
+    const existPostId = await prisma.post.findUnique({
+      where: { id: params.postId },
+    });
 
-  const post = await prisma.post.findUnique({
-    where: { postId },
-  });
+    if (!existPostId) {
+      throw new Error(CommentStatus.POST_NOT_FOUND);
+    }
 
-  if (!post) {
-    throw GetCommentsError.POST_NOT_FOUND;
-  }
-
-  const comments = await prisma.comment.findMany({
-    where: { postId },
-    orderBy: { createdAt: "desc" },
-    skip: (page - 1) * limit,
-    take: limit,
-    include: {
-      user: {
-        select: { username: true },
+    const result = await prisma.comment.create({
+      data: {
+        content: params.content,
+        post: { connect: { id: params.postId } },
+        user: { connect: { id: params.userId } },
       },
-    },
-  });
+    });
 
-  return {
-    comments: comments.map((comment) => ({
-      commentId: comment.commentId,
-      content: comment.content,
-      createdAt: comment.createdAt,
-      username: comment.user.username,
-    })),
-  };
+    return { comment: result };
+  } catch (error) {
+    console.error("Error creating comment:", error);
+    throw new Error(CommentStatus.COMMENT_CREATION_FAILED);
+  }
 };
 
-//controller to delete a comment wrt the commentID
-export const deleteComment = async (parameters: {
-  userId: string;
-  commentId: string;
-}): Promise<DeleteCommentResult> => {
-  const { userId, commentId } = parameters;
+// Get all comments for a post (reverse chronological order, paginated)
+export const getAllComments = async (params: {
+  postId: string;
+  page: number;
+  limit: number;
+}): Promise<{ comments: any[] }> => {
+  try {
+    const { skip, take } = getPagination(params.page, params.limit);
 
-  const comment = await prisma.comment.findUnique({
-    where: { commentId: commentId },
-  });
-  //cjeck if comment is present
+    const comments = await prisma.comment.findMany({
+      where: { postId: params.postId }, // Filter by postId
+      orderBy: { createdAt: "desc" }, // Reverse chronological order
+      skip,
+      take,
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+      },
+    });
 
-  if (!comment) {
-    throw DeleteCommentError.COMMENT_NOT_FOUND;
+    if (!comments || comments.length === 0) {
+      return { comments: [] };
+    }
+
+    return { comments };
+  } catch (error) {
+    console.error("Error fetching comments:", error);
+    throw new Error(CommentStatus.UNKNOWN);
   }
-
-  if (comment.userId !== userId) {
-    throw DeleteCommentError.UNAUTHORIZED;
-  }
-
-  await prisma.comment.delete({
-    where: { commentId: commentId },
-  });
-
-  return { success: true };
 };
 
-//controller to update a comment
-export const updateComment = async (parameters: {
-  userId: string;
+export const deleteComment = async (params: {
   commentId: string;
+  userId: string;
+}): Promise<CommentStatus> => {
+  try {
+    const comment = await prisma.comment.findUnique({
+      where: { id: params.commentId },
+    });
+
+    if (!comment) {
+      return CommentStatus.COMMENT_NOT_FOUND;
+    }
+
+    await prisma.comment.delete({ where: { id: params.commentId } });
+
+    return CommentStatus.DELETE_SUCCESS;
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    return CommentStatus.UNKNOWN;
+  }
+};
+
+//update comment controller
+export const updateComment = async (params: {
+  commentId: string;
+  userId: string;
   content: string;
-}): Promise<UpdateCommentResult> => {
-  const { userId, commentId, content } = parameters;
+}): Promise<CommentStatus> => {
+  try {
+    const comment = await prisma.comment.findUnique({
+      where: { id: params.commentId },
+    });
 
-  const comment = await prisma.comment.findUnique({
-    where: { commentId: commentId },
-  });
+    if (!comment) {
+      return CommentStatus.COMMENT_NOT_FOUND;
+    }
 
-  if (!comment) {
-    throw UpdateCommentError.COMMENT_NOT_FOUND;
+    await prisma.comment.update({
+      where: { id: params.commentId },
+      data: { content: params.content },
+    });
+
+    return CommentStatus.UPDATE_SUCCESS;
+  } catch (error) {
+    console.error("Error updating comment:", error);
+    return CommentStatus.UNKNOWN;
   }
-
-  if (comment.userId !== userId) {
-    throw UpdateCommentError.UNAUTHORIZED;
-  }
-
-  const updatedComment = await prisma.comment.update({
-    where: { commentId: commentId },
-    data: { content, updatedAt: new Date() },
-  });
-
-  return {
-    success: true,
-    updatedComment: {
-      commentId: updatedComment.commentId,
-      content: updatedComment.content,
-      updatedAt: updatedComment.updatedAt,
-    },
-  };
 };

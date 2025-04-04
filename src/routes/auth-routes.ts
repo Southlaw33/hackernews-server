@@ -1,7 +1,6 @@
 import { Hono } from "hono";
-
 import {
-  LogInWithUsernameAndPassword,
+  logInWithUsernameAndPassword,
   signUpWithUsernameAndPassword,
 } from "../controllers/authentication/authentication-controller";
 import {
@@ -11,36 +10,23 @@ import {
 
 export const authenticationRoutes = new Hono();
 
-authenticationRoutes.post("/sign-up", async (context) => {
-  const { username, password } = await context.req.json();
+authenticationRoutes.post("/sign-in", async (c) => {
+  const { username, password, name } = await c.req.json();
   try {
     const result = await signUpWithUsernameAndPassword({
       username,
       password,
+      name,
     });
-    return context.json(
-      {
-        data: result,
-        message: "all ok",
-      },
-      201
-    );
-  } catch (e) {
-    if (e === SignUpWithUsernameAndPasswordError.CONFLICTING_USERNAME) {
-      return context.json(
-        {
-          message: "USername is already existing",
-        },
-        409
-      );
+
+    return c.json({ data: result }, 200);
+  } catch (error) {
+    if (error === SignUpWithUsernameAndPasswordError.CONFLICTING_USERNAME) {
+      return c.json({ error: "Username already exists" }, 409);
     }
-    if (e === SignUpWithUsernameAndPasswordError.UNKNOWN) {
-      return context.json(
-        {
-          message: "Server error",
-        },
-        500
-      );
+
+    if (error === SignUpWithUsernameAndPasswordError.UNKNOWN) {
+      return c.json({ error: "Unknown error" }, 500);
     }
   }
 });
@@ -48,32 +34,25 @@ authenticationRoutes.post("/sign-up", async (context) => {
 authenticationRoutes.post("/log-in", async (c) => {
   try {
     const { username, password } = await c.req.json();
-    const result = await LogInWithUsernameAndPassword({
+
+    const result = await logInWithUsernameAndPassword({
       username,
       password,
     });
+
     return c.json(
       {
         data: result,
       },
-      201
+      200
     );
-  } catch (e) {
+  } catch (error) {
     if (
-      e === LogInWithUsernameAndPasswordError.INCORRECT_USERNAME_OR_PASSWORD
+      error === LogInWithUsernameAndPasswordError.INCORRECT_USERNAME_OR_PASSWORD
     ) {
-      return c.json(
-        {
-          message: "INcorrect username or password",
-        },
-        401
-      );
+      return c.json({ error: "Incorrect username or password" }, 401);
     }
-    return c.json(
-      {
-        message: "Server error",
-      },
-      500
-    );
+
+    return c.json({ error: "Unknown error" }, 500);
   }
 });

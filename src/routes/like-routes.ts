@@ -1,147 +1,101 @@
-import { Hono } from "hono";
 import {
-  deleteLike,
+  createLike,
+  deleteLikeOnPost,
   getLikesOnPost,
-  likePost,
 } from "../controllers/likes/like-controllers";
-import {
-  DeleteLikeError,
-  GetLikesError,
-  LikePostError,
-} from "../controllers/likes/like-types";
-import { prisma } from "../extras/prisma";
+import { LikeStatus } from "../controllers/likes/like-types";
 import { tokenMiddleWare } from "./middlewares/token-middleware";
+import { Hono } from "hono";
 
-export const likeRoute = new Hono();
+export const likeRoutes = new Hono();
 
-//route to like a post
-likeRoute.post("/on/:postId", tokenMiddleWare, async (c) => {
-  const userId = c.get("userId");
-  const postId = c.req.param("postId");
-  if (!userId) {
-    return c.json(
-      {
-        message: "Unauthorized",
-      },
-      401
-    );
-  }
+likeRoutes.post("/on/:postId", tokenMiddleWare, async (context) => {
   try {
-    const result = await likePost({ userId, postId });
-
-    return c.json(
-      {
-        data: result,
-      },
-      201
-    );
-  } catch (e) {
-    if (e === LikePostError.POST_NOT_FOUND) {
-      return c.json(
-        {
-          error: "Post not found",
-        },
-        404
-      );
+    const userId = context.get("userId");
+    const postId = context.req.param("postId");
+    if (!userId) {
+      return context.json({ error: "Unauthorized" }, 401);
     }
 
-    if (e === LikePostError.ALREADY_LIKED) {
-      return c.json(
-        {
-          error: "User has already liked this post",
-        },
-        409
-      );
+    const result = await createLike({ postId, userId });
+
+    if (result.status === LikeStatus.POST_NOT_FOUND) {
+      return context.json({ error: "Post not found" }, 404);
     }
 
-    return c.json(
-      {
-        message: "Internal Server Error",
-      },
-      500
-    );
+    if (result.status === LikeStatus.ALREADY_LIKED) {
+      return context.json({ message: "You have already liked this post" }, 200);
+    }
+
+    if (result.status === LikeStatus.UNKNOWN) {
+      return context.json({ error: "Unknown error" }, 500);
+    }
+
+    return context.json({ message: "Post liked successfully" }, 201);
+  } catch (error) {
+    console.error(error);
+    return context.json({ error: "Server error" }, 500);
   }
 });
 
-//route to get all likes
-likeRoute.get("/on/:postId", async (c) => {
-  const postId = c.req.param("postId");
-  const page = Number(c.req.query("page")) || 1;
-  const limit = Number(c.req.query("limit")) || 10;
-
+//Get all likes of specific users
+likeRoutes.get("/on/:postId", tokenMiddleWare, async (context) => {
   try {
-    const result = await getLikesOnPost({ postId, page, limit });
+    const postId = context.req.param("postId");
+    const page = parseInt(context.req.query("page") || "1", 10);
+    const limit = parseInt(context.req.query("limit") || "2", 10);
 
-    return c.json(
-      {
-        data: result,
-      },
-      200
-    );
-  } catch (e) {
-    if (e === GetLikesError.POST_NOT_FOUND) {
-      return c.json(
-        {
-          error: "Post not found",
-        },
-        404
-      );
+    const result = await getLikesOnPost({
+      postId: postId,
+      page: page,
+      limit: limit,
+    });
+
+    if (result === LikeStatus.POST_NOT_FOUND) {
+      return context.json({ error: "Post not found" }, 404);
     }
 
-    return c.json(
-      {
-        message: "Internal Server Error",
-      },
-      500
-    );
+    if (result === LikeStatus.NO_LIKES_FOUND) {
+      return context.json({ error: "No likes found on this post" }, 404);
+    }
+
+    if (result === LikeStatus.UNKNOWN) {
+      return context.json({ error: "An unknown error occurred" }, 500);
+    }
+
+    return context.json(result, 200);
+  } catch (error) {
+    console.error(error);
+    return context.json({ error: "Server error" }, 500);
   }
 });
 
-//route to delete like
-likeRoute.delete("/on/:postId", tokenMiddleWare, async (c) => {
-  const userId = c.get("userId");
-  const postId = c.req.param("postId");
-  if (!userId) {
-    return c.json(
-      {
-        message: "Unauthorized",
-      },
-      401
-    );
-  }
+//Delete a like
+likeRoutes.delete("/on/:postId", tokenMiddleWare, async (context) => {
   try {
-    const result = await deleteLike({ userId, postId });
+    const postId = context.req.param("postId");
+    const userId = context.get("userId"); // Extract userId from JWT middleware
 
-    return c.json(
-      {
-        data: result,
-      },
-      200
-    );
-  } catch (e) {
-    if (e === DeleteLikeError.POST_NOT_FOUND) {
-      return c.json(
-        {
-          error: "Post not found",
-        },
+    if (!postId || !userId) {
+      return context.json({ error: "Invalid postId or userId" }, 400);
+    }
+
+    const result = await deleteLikeOnPost({ postId, userId });
+
+    if (result === LikeStatus.LIKE_NOT_FOUND) {
+      return context.json(
+        { error: "Like not found or not authored by you" },
         404
       );
     }
 
-    if (e === DeleteLikeError.LIKE_NOT_FOUND) {
-      return c.json(
-        {
-          error: "Like not found",
-        },
-        404
-      );
+    if (result === LikeStatus.UNKNOWN) {
+      return context.json({ error: "An unknown error occurred" }, 500);
     }
 
-    return c.json(
-      {
-        message: "Internal Server Error",
-      },
-      500
-    );
+    return context.json({ message: "Like deleted successfully" }, 200);
+  } catch (error) {
+    console.error(error);
+    return context.json({ error: "Server error" }, 500);
   }
 });

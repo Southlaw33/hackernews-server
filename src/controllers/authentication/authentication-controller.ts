@@ -1,76 +1,90 @@
-import type { User } from "@prisma/client";
-import { Sign } from "crypto";
 import { createHash } from "crypto";
-<<<<<<< HEAD
-import { prisma } from "../../extras/prisma";
-=======
-import { prisma } from "../../extras/prisma.ts";
->>>>>>> 702b18e165e7148aa41e79f52d35d77521481c19
 import {
   LogInWithUsernameAndPasswordError,
   SignUpWithUsernameAndPasswordError,
   type LogInWithUsernameAndPasswordResult,
   type SignUpWithUsernameAndPasswordResult,
 } from "./+types";
+import { prisma } from "../../extras/prisma";
 import jwt from "jsonwebtoken";
-import { PrismaClient } from "@prisma/client/extension";
 import { jwtSecretKey } from "../../../environment";
 
-const createPasswordHash = (parameters: { password: string }): string => {
+export const createPasswordHash = (parameters: {
+  password: string;
+}): string => {
   return createHash("sha256").update(parameters.password).digest("hex");
 };
 
-<<<<<<< HEAD
-=======
-//to sign up
->>>>>>> 702b18e165e7148aa41e79f52d35d77521481c19
-export const signUpWithUsernameAndPassword = async (parameters: {
+const createJWToken = (parameters: {
+  id: string;
   username: string;
-  password: string;
-}): Promise<SignUpWithUsernameAndPasswordResult> => {
-  const existingUser = await prisma.user.findUnique({
-    where: {
-      username: parameters.username,
-    },
-  });
-
-  if (existingUser) {
-    throw SignUpWithUsernameAndPasswordError.CONFLICTING_USERNAME;
-  }
-  const passwordHash = createPasswordHash({
-    password: parameters.password,
-  });
-  const user = await prisma.user.create({
-    data: {
-      username: parameters.username,
-      password: passwordHash,
-    },
-  });
-  const JwtPayload: jwt.JwtPayload = {
-    iss: "atchutha57@gmail.com",
-    sub: user!.id,
-    username: user!.username,
+}): string => {
+  const jwtPayload: jwt.JwtPayload = {
+    iss: "https://purpleshorts.co.in",
+    sub: parameters.id,
+    username: parameters.username,
   };
-  const token = jwt.sign(JwtPayload, jwtSecretKey, {
+
+  const token = jwt.sign(jwtPayload, jwtSecretKey, {
     expiresIn: "30d",
   });
 
-  const result: SignUpWithUsernameAndPasswordResult = {
-    token,
-    user,
-  };
-  return result;
+  return token;
 };
 
-<<<<<<< HEAD
-=======
-//to login
->>>>>>> 702b18e165e7148aa41e79f52d35d77521481c19
-export const LogInWithUsernameAndPassword = async (parameters: {
+export const signUpWithUsernameAndPassword = async (parameters: {
+  username: string;
+  password: string;
+  name: string;
+}): Promise<SignUpWithUsernameAndPasswordResult> => {
+  try {
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        username: parameters.username,
+      },
+    });
+
+    if (existingUser) {
+      throw SignUpWithUsernameAndPasswordError.CONFLICTING_USERNAME;
+    }
+
+    const hashedPassword = createPasswordHash({
+      password: parameters.password,
+    });
+    const user = await prisma.user.create({
+      data: {
+        username: parameters.username,
+        password: hashedPassword,
+        name: parameters.name,
+      },
+    });
+
+    const jwtPayload: jwt.JwtPayload = {
+      iss: "http://purpleshorts.co.in",
+      sub: user.id,
+      username: user.username,
+    };
+
+    const token = jwt.sign(jwtPayload, jwtSecretKey, {
+      expiresIn: "30d",
+    });
+
+    const result: SignUpWithUsernameAndPasswordResult = {
+      token,
+      user,
+    };
+
+    return result;
+  } catch (e) {
+    console.error(e);
+    throw SignUpWithUsernameAndPasswordError.UNKNOWN;
+  }
+};
+
+export const logInWithUsernameAndPassword = async (parameters: {
   username: string;
   password: string;
 }): Promise<LogInWithUsernameAndPasswordResult> => {
-  //creating a password hash
   const passwordHash = createPasswordHash({
     password: parameters.password,
   });
@@ -86,17 +100,15 @@ export const LogInWithUsernameAndPassword = async (parameters: {
     throw LogInWithUsernameAndPasswordError.INCORRECT_USERNAME_OR_PASSWORD;
   }
 
-  const JwtPayload: jwt.JwtPayload = {
-    iss: "atchutha57@gmail.com",
-    sub: user.id,
+  const token = createJWToken({
+    id: user.id,
     username: user.username,
-  };
-  const token = jwt.sign(JwtPayload, jwtSecretKey, {
-    expiresIn: "30d",
   });
 
-  return {
+  const result: LogInWithUsernameAndPasswordResult = {
     token,
     user,
   };
+
+  return result;
 };

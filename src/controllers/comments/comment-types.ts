@@ -1,51 +1,19 @@
 import type { Comment } from "@prisma/client";
 
-export type CreateCommentResult = {
-  commentId: string;
-  content: string;
-  createdAt: Date;
-};
-
-export enum CreateCommentError {
-  POST_NOT_FOUND,
-  UNKNOWN,
+export enum CommentStatus {
+  POST_NOT_FOUND = "POST_NOT_FOUND",
+  CREATED_SUCCEFULLY = "CREATE_SUCCESSFULLY",
+  COMMENT_CREATION_FAILED = "COMMENT_CREATION_FAILED",
+  COMMENT_NOT_FOUND = "COMMENT_NOT_FOUND",
+  UNKNOWN = "UNKNOWN",
+  DELETE_SUCCESS = "DELETE_SUCCESS",
+  UPDATE_SUCCESS = "UPDATE_SUCCESS",
 }
 
-export type GetCommentsResult = {
-  comments: {
-    commentId: string;
-    content: string;
-    createdAt: Date;
-    username: string;
-  }[];
+export type CreatCommentResult = {
+  comment: Comment;
 };
 
-export enum GetCommentsError {
-  POST_NOT_FOUND,
-  UNKNOWN,
-}
-
-export type DeleteCommentResult = {
-  success: boolean;
+export type CommentResult = {
+  comment: Comment[];
 };
-
-export enum DeleteCommentError {
-  COMMENT_NOT_FOUND,
-  UNAUTHORIZED,
-  UNKNOWN,
-}
-
-export type UpdateCommentResult = {
-  success: boolean;
-  updatedComment: {
-    commentId: string;
-    content: string;
-    updatedAt: Date;
-  };
-};
-
-export enum UpdateCommentError {
-  COMMENT_NOT_FOUND,
-  UNAUTHORIZED,
-  UNKNOWN,
-}

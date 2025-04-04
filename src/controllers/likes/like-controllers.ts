@@ -1,106 +1,120 @@
-import type { Like } from "@prisma/client";
-import { paginate } from "../../routes/pagination";
+import { getPagination } from "../../routes/pagination";
 import { prisma } from "../../extras/prisma";
-import {
-  DeleteLikeError,
-  GetLikesError,
-  LikePostError,
-  type DeleteLikeResult,
-  type GetLikesResult,
-  type LikePostResult,
-} from "./like-types";
+import { LikeStatus, type GetLikesResult, type LikeCreate } from "./like-types";
 
-//like a post
-export const likePost = async (parameters: {
-  userId: string;
+// Function to create a like on a post
+export const createLike = async (params: {
   postId: string;
-}): Promise<LikePostResult> => {
-  const { userId, postId } = parameters;
+  userId: string;
+}): Promise<LikeCreate> => {
+  try {
+    // Check if post exists
+    const post = await prisma.post.findUnique({
+      where: { id: params.postId },
+    });
 
-  const post = await prisma.post.findUnique({
-    where: { postId },
-  });
-  //check if the post exists
-  if (!post) {
-    throw LikePostError.POST_NOT_FOUND;
+    if (!post) {
+      return { status: LikeStatus.POST_NOT_FOUND };
+    }
+
+    // Check if user has already liked this post
+    const existingLike = await prisma.like.findFirst({
+      where: {
+        postId: params.postId,
+        userId: params.userId,
+      },
+    });
+
+    if (existingLike) {
+      return { status: LikeStatus.ALREADY_LIKED };
+    }
+
+    // Create a new like
+    await prisma.like.create({
+      data: {
+        postId: params.postId,
+        userId: params.userId,
+      },
+    });
+
+    return { status: LikeStatus.LIKE_SUCCESS };
+  } catch (error) {
+    console.error(error);
+    return { status: LikeStatus.UNKNOWN };
   }
-  //check if user has already like this post
-  const existingLike = await prisma.like.findFirst({
-    where: {
-      postId: parameters.postId,
-      userId: parameters.userId,
-    },
-  });
-
-  if (existingLike) {
-    throw LikePostError.ALREADY_LIKED;
-  }
-
-  const like = await prisma.like.create({
-    data: {
-      userId,
-      postId,
-    },
-  });
-
-  return { like };
 };
 
-//get all likes on a post in reverse chronological order
-export const getLikesOnPost = async (parameters: {
+//Get all likes on a specific post in reverse chronological order with pagination.
+export const getLikesOnPost = async (params: {
   postId: string;
-  page?: number;
-  limit?: number;
-}): Promise<GetLikesResult> => {
-  const { postId, page = 1, limit = 10 } = parameters;
+  page: number;
+  limit: number;
+}): Promise<GetLikesResult | LikeStatus> => {
+  try {
+    const { skip, take } = getPagination(params.page, params.limit);
 
-  const post = await prisma.post.findUnique({
-    where: { postId },
-  });
+    // Check if the post exists
+    const post = await prisma.post.findUnique({
+      where: { id: params.postId },
+    });
 
-  if (!post) {
-    throw GetLikesError.POST_NOT_FOUND;
+    if (!post) {
+      return LikeStatus.POST_NOT_FOUND;
+    }
+
+    const likes = await prisma.like.findMany({
+      where: { postId: params.postId },
+      orderBy: { createdAt: "desc" }, // Reverse chronological order
+      skip,
+      take,
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+      },
+    });
+
+    if (!likes || likes.length === 0) {
+      return LikeStatus.NO_LIKES_FOUND;
+    }
+
+    return { likes };
+  } catch (error) {
+    console.error(error);
+    return LikeStatus.UNKNOWN;
   }
-
-  const likes = await prisma.like.findMany({
-    where: { postId },
-    orderBy: { likedAt: "desc" }, // Reverse chronological order
-    skip: (page - 1) * limit,
-    take: limit,
-  });
-
-  return { likes };
 };
 
-//Delete a like (or can be dislike)
-export const deleteLike = async (parameters: {
-  userId: string;
+export const deleteLikeOnPost = async (params: {
   postId: string;
-}): Promise<DeleteLikeResult> => {
-  const { userId, postId } = parameters;
+  userId: string;
+}): Promise<LikeStatus> => {
+  try {
+    // Check if the like exists
+    const like = await prisma.like.findFirst({
+      where: {
+        postId: params.postId,
+        userId: params.userId,
+      },
+    });
 
-  const post = await prisma.post.findUnique({
-    where: { postId },
-  });
+    if (!like) {
+      return LikeStatus.LIKE_NOT_FOUND;
+    }
 
-  if (!post) {
-    throw DeleteLikeError.POST_NOT_FOUND;
+    // Delete the like
+    await prisma.like.delete({
+      where: {
+        id: like.id,
+      },
+    });
+
+    return LikeStatus.LIKE_DELETED;
+  } catch (error) {
+    console.error(error);
+    return LikeStatus.UNKNOWN;
   }
-
-  const like = await prisma.like.findFirst({
-    where: {
-      postId,
-      userId,
-    },
-  });
-
-  if (!like) {
-    throw DeleteLikeError.LIKE_NOT_FOUND;
-  }
-
-  await prisma.like.delete({
-    where: { likeId: like.likeId },
-  });
-
-  return { success: true };
 };

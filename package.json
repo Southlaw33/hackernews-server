@@ -1,39 +1,24 @@
 {
-<<<<<<< HEAD
   "name": "hackernews-server",
   "type": "module",
+  "version": "1.0.0",
   "scripts": {
+    "dev": "tsx watch src/index.ts",
     "build": "tsc -p tsconfig.build.json",
-    "start": "node dist/index.js",
-=======
-  "name": "hn-s",
-  "type": "module",
-  "scripts": {
->>>>>>> 702b18e165e7148aa41e79f52d35d77521481c19
-    "dev": "tsx watch src/index.ts"
+    "start": "node dist/src/index.js"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.0",
     "@prisma/client": "^6.5.0",
     "dotenv": "^16.4.7",
     "hono": "^4.7.5",
-<<<<<<< HEAD
-    "jsonwebtoken": "^9.0.2",
-    "prisma": "^6.5.0",
-    "tsx": "^4.7.1"
-=======
     "jsonwebtoken": "^9.0.2"
->>>>>>> 702b18e165e7148aa41e79f52d35d77521481c19
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^20.11.17",
+    "@types/jsonwebtoken": "^9.0.9",
     "prisma": "^6.5.0",
-<<<<<<< HEAD
-    "tsx": "^4.7.1",
+    "tsx": "^4.7.1" ,
     "typescript": "^5.8.2"
-=======
-    "tsx": "^4.7.1"
->>>>>>> 702b18e165e7148aa41e79f52d35d77521481c19
   }
 }

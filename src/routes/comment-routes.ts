@@ -1,170 +1,72 @@
-import type { Comment } from "@prisma/client";
-import { paginate } from "./pagination";
-import { prisma } from "../extras/prisma";
 import { Hono } from "hono";
+import { CommentStatus } from "../controllers/comments/comment-types";
+import { tokenMiddleWare } from "../routes/middlewares/token-middleware";
 import {
   createComment,
   deleteComment,
-  getCommentsOnPost,
+  getAllComments,
   updateComment,
 } from "../controllers/comments/comment-controllers";
-import {
-  CreateCommentError,
-  DeleteCommentError,
-  GetCommentsError,
-  UpdateCommentError,
-  type CreateCommentResult,
-} from "../controllers/comments/comment-types";
-import { tokenMiddleWare } from "./middlewares/token-middleware";
 
-export const commentRoute = new Hono();
+export const commentRoutes = new Hono();
 
-//route to post a comment
-commentRoute.post("/on/:postId", tokenMiddleWare, async (c) => {
-  const userId = c.get("userId");
-  const postId = c.req.param("postId");
-  const { content } = await c.req.json();
-  if (!userId) {
-    return c.json(
-      {
-        message: "Unauthorized",
-      },
-      401
-    );
-  }
+commentRoutes.post("/on/:postId", tokenMiddleWare, async (c) => {
   try {
-    const result = await createComment({ userId, postId, content });
-    return c.json({ data: result }, 201);
-  } catch (e) {
-    if (e === CreateCommentError.POST_NOT_FOUND) {
-      return c.json(
-        {
-          error: "Post not found",
-        },
-        404
-      );
+    const postId = c.req.param("postId");
+    const userId = c.get("userId");
+    const { content } = await c.req.json();
+
+    const result = await createComment({ content, postId, userId });
+    return c.json(result);
+  } catch (error) {
+    if (error === CommentStatus.POST_NOT_FOUND) {
+      return c.json({ message: "Post not found" }, 404);
     }
-    return c.json(
-      {
-        message: "Internal Server error",
-      },
-      500
-    );
+    if (error === CommentStatus.COMMENT_CREATION_FAILED) {
+      return c.json({ message: "Comment creation failed" }, 500);
+    }
+
+    return c.json({ message: "Unknown error" }, 500);
   }
 });
 
-//route to get all the comments on a post
-commentRoute.get("/on/:postId", async (c) => {
+//get all comments for a post
+commentRoutes.get("/on/:postId", tokenMiddleWare, async (c) => {
   const postId = c.req.param("postId");
   const page = Number(c.req.query("page")) || 1;
   const limit = Number(c.req.query("limit")) || 10;
+
   try {
-    const result = await getCommentsOnPost({ postId, page, limit });
-    return c.json(
-      {
-        data: result,
-      },
-      200
-    );
-  } catch (e) {
-    if (e === GetCommentsError.POST_NOT_FOUND) {
-      return c.json(
-        {
-          error: "Post not found",
-        },
-        404
-      );
-    }
-    return c.json(
-      {
-        message: "Internal Server Error",
-      },
-      500
-    );
+    const result = await getAllComments({ postId, page, limit });
+    return c.json({ status: "SUCCESS", comments: result.comments }, 200);
+  } catch (error) {
+    return c.json({ status: error }, 404);
   }
 });
 
-//route to delete a comment
-commentRoute.delete("/:commentId", tokenMiddleWare, async (c) => {
-  const userId = c.get("userId");
+//delete
+commentRoutes.delete("/:commentId", tokenMiddleWare, async (c) => {
   const commentId = c.req.param("commentId");
+  const userId = c.get("userId");
 
   try {
-    const result = await deleteComment({ userId, commentId });
-
-    return c.json(
-      {
-        data: result,
-      },
-      200
-    );
-  } catch (e) {
-    if (e === DeleteCommentError.COMMENT_NOT_FOUND) {
-      return c.json(
-        {
-          error: "Comment not found",
-        },
-        404
-      );
-    }
-
-    if (e === DeleteCommentError.UNAUTHORIZED) {
-      return c.json(
-        {
-          error: "Unauthorized: You can only delete your own comments",
-        },
-        403
-      );
-    }
-
-    return c.json(
-      {
-        message: "Internal Server Error",
-      },
-      500
-    );
+    const result = await deleteComment({ commentId, userId });
+    return c.json({ status: result }, 200);
+  } catch (error) {
+    return c.json({ status: error }, 403);
   }
 });
 
-//route to update a particular comment
-commentRoute.patch("/:commentId", tokenMiddleWare, async (c) => {
-  const userId = c.get("userId");
+//update the comment
+commentRoutes.patch("/:commentId", tokenMiddleWare, async (c) => {
   const commentId = c.req.param("commentId");
+  const userId = c.get("userId");
   const { content } = await c.req.json();
 
   try {
-    const result = await updateComment({ userId, commentId, content });
-
-    return c.json(
-      {
-        data: result,
-      },
-      200
-    );
-  } catch (e) {
-    if (e === UpdateCommentError.COMMENT_NOT_FOUND) {
-      return c.json(
-        {
-          error: "Comment not found",
-        },
-        404
-      );
-    }
-
-    if (e === UpdateCommentError.UNAUTHORIZED) {
-      return c.json(
-        {
-          error: "Unauthorized: You can only update your own comments",
-        },
-        403
-      );
-    }
-
-    return c.json(
-      {
-        message: "Internal Server Error",
-      },
-      500
-    );
+    const result = await updateComment({ commentId, userId, content });
+    return c.json({ status: result }, 200);
+  } catch (error) {
+    return c.json({ status: error }, 403);
   }
 });

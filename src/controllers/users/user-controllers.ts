@@ -1,36 +1,41 @@
+import { getPagination } from "../../routes/pagination";
 import { prisma } from "../../extras/prisma";
-import { paginate } from "../../routes/pagination";
 import {
+  GetAllUsersError,
   GetMeError,
-  GetUsersError,
+  type GetAllUsersResult,
   type GetMeResult,
-  type GetUsersResult,
 } from "./user-types";
 
-export const getMe = async (parameters: {
+export const GetMe = async (parameters: {
   userId: string;
 }): Promise<GetMeResult> => {
-  const user = await prisma.user.findUnique({
-    where: {
-      id: parameters.userId,
-    },
-  });
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: parameters.userId },
+    });
 
-  if (!user) {
-    throw GetMeError.BAD_REQUEST;
+    if (!user) {
+      throw GetMeError.USER_NOT_FOUND;
+    }
+
+    const result: GetMeResult = {
+      user: user,
+    };
+
+    return result;
+  } catch (e) {
+    console.error(e);
+    throw GetMeError.UNKNOWN;
   }
-
-  return {
-    user,
-  };
 };
 
-export const getUsers = async (parameter: {
+export const GetUsers = async (parameter: {
   page: number;
   limit: number;
-}): Promise<GetUsersResult> => {
+}): Promise<GetAllUsersResult> => {
   try {
-    const { skip, take } = paginate(parameter.page, parameter.limit);
+    const { skip, take } = getPagination(parameter.page, parameter.limit);
 
     const users = await prisma.user.findMany({
       orderBy: { name: "asc" },
@@ -39,12 +44,12 @@ export const getUsers = async (parameter: {
     });
 
     if (!users || users.length === 0) {
-      throw GetUsersError.NO_USERS;
+      throw GetAllUsersError.NO_USERS_FOUND;
     }
 
     return { users };
   } catch (e) {
     console.error(e);
-    throw GetUsersError.UNKNOWN;
+    throw GetAllUsersError.UNKNOWN;
   }
 };
