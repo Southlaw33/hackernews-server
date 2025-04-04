@@ -1,11 +1,11 @@
 import { Hono } from "hono";
-import { tokenMiddleWare } from "./middlewares/token-middleware";
+import { tokenMiddleWare } from "./middlewares/token-middleware.js";
 import {
   createPost,
   deletePost,
   getAllPosts,
   getPostsByUser,
-} from "../controllers/posts/post-controllers";
+} from "../controllers/posts/post-controllers.js";
 import {
   DeletePostError,
   GetPostsError,
