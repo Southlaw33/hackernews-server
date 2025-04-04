@@ -7,7 +7,7 @@ import {
 } from "./+types.js";
 import { prisma } from "../../extras/prisma.js";
 import jwt from "jsonwebtoken";
-import { jwtSecretKey } from "../../environment.js";
+import { JWT_SECRET_KEY } from "../../environment.js";
 
 export const createPasswordHash = (parameters: {
   password: string;
@@ -25,9 +25,14 @@ const createJWToken = (parameters: {
     username: parameters.username,
   };
 
-  const token = jwt.sign(jwtPayload, jwtSecretKey, {
-    expiresIn: "30d",
-  });
+  const token = jwt.sign(
+    jwtPayload,
+    JWT_SECRET_KEY,
+
+    {
+      expiresIn: "30d",
+    }
+  );
 
   return token;
 };

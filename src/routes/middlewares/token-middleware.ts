@@ -1,5 +1,5 @@
 import { createMiddleware } from "hono/factory";
-import { jwtSecretKey } from "../../environment.js";
+import { JWT_SECRET_KEY} from "../../environment.js";
 import jwt from "jsonwebtoken";
 
 export const tokenMiddleWare = createMiddleware<{
@@ -12,7 +12,7 @@ export const tokenMiddleWare = createMiddleware<{
     return context.json({ message: "Token missing , Unauthorized" }, 401);
   }
   try {
-    const verified = jwt.verify(token, jwtSecretKey) as jwt.JwtPayload;
+    const verified = jwt.verify(token, JWT_SECRET_KEY) as jwt.JwtPayload;
     const userId = verified.sub;
     if (userId) {
       context.set("userId", userId);
