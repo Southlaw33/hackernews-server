@@ -70,7 +70,7 @@ export const signUpWithUsernameAndPassword = async (parameters: {
       username: user.username,
     };
 
-    const token = jwt.sign(jwtPayload, jwtSecretKey, {
+    const token = jwt.sign(jwtPayload, JWT_SECRET_KEY, {
       expiresIn: "30d",
     });
 
