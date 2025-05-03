@@ -1,11 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -15,44 +10,92 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  username  String    @unique
-  name      String?
-  password  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  posts     Post[]
-  Like      Like[]
-  Comment   Comment[]
+  id              String    @id @default(uuid())
+  name            String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  username        String    @unique
+  email           String    @unique
+  emailVerified   Boolean
+  image           String?
+  displayUsername String?
+  about           String?
+  accounts        Account[]
+  comments        Comment[]
+  likes           Like[]
+  posts           Post[]
+  sessions        Session[]
 }
 
 model Post {
   id        String    @id @default(uuid())
   title     String
   content   String
+  userId    String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  userId    String
+  comments  Comment[]
+  likes     Like[]
   author    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Like      Like[]
-  Comment   Comment[]
 }
 
 model Like {
   id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
 }
 
 model Comment {
   id        String   @id @default(uuid())
   content   String
-  createdAt DateTime @default(now())
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId    String?
   userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
 }
