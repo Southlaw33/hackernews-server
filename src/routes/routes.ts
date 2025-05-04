@@ -13,7 +13,7 @@ export const allRoutes = new Hono();
 // Allow cross-origin requests from frontend (you can allow multiple origins here)
 allRoutes.use(
   cors({
-    origin: ["https://hackernews-web-hazel.vercel.app/"], // Add your actual frontend origin here
+    origin: ["https://hackernews-web-hazel.vercel.app"], // Add your actual frontend origin here
     allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     credentials: true, // Allow cookies to be included
     allowHeaders: ["Content-Type", "Authorization", "token"],
