@@ -11,6 +11,8 @@ import {
 
 export const authenticationRoutes = new Hono();
 
+//for signup and login
+
 authenticationRoutes.post("/signup", async (c) => {
   const { username, password, name, email } = await c.req.json();
   try {
