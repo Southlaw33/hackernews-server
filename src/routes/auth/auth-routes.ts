@@ -3,17 +3,15 @@ import { Hono } from "hono";
 import {
   LogInWithUsernameAndPasswordError,
   SignUpWithUsernameAndPasswordError,
-} from "../auth/authentication-types";
+} from "../../routes/auth/authentication-types";
 import {
   logInWithUsernameAndPassword,
   signUpWithUsernameAndPassword,
-} from "../auth/authentication-controller";
+} from "../../routes/auth/authentication-controller";
 
 export const authenticationRoutes = new Hono();
 
-//for signup and login
-
-authenticationRoutes.post("/signup", async (c) => {
+authenticationRoutes.post("/sign-up", async (c) => {
   const { username, password, name, email } = await c.req.json();
   try {
     const result = await signUpWithUsernameAndPassword({
@@ -32,7 +30,7 @@ authenticationRoutes.post("/signup", async (c) => {
   }
 });
 
-authenticationRoutes.post("/login", async (c) => {
+authenticationRoutes.post("/log-in", async (c) => {
   try {
     const { username, password } = await c.req.json();
 
@@ -41,12 +39,7 @@ authenticationRoutes.post("/login", async (c) => {
       password,
     });
 
-    return c.json(
-      {
-        data: result,
-      },
-      200
-    );
+    return c.json({ data: result }, 200);
   } catch (error) {
     if (
       error === LogInWithUsernameAndPasswordError.INCORRECT_USERNAME_OR_PASSWORD
