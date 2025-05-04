@@ -1,4 +1,4 @@
-import { prismaClient as prisma } from "../../integrations/prisma/index";
+import { prismaClient as prisma } from "../../integrations/prisma/index.js";
 import {
   DeleteLikeError,
   GetLikesError,
@@ -10,7 +10,7 @@ import {
   type GetLikesOnUserResult,
   type GetLikesResult,
   type LikePostResult,
-} from "./like-types";
+} from "./like-types.js";
 
 export const GetLikes = async (parameters: {
   postId: string;

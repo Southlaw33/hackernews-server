@@ -3,11 +3,11 @@ import { Hono } from "hono";
 import {
   LogInWithUsernameAndPasswordError,
   SignUpWithUsernameAndPasswordError,
-} from "../../routes/auth/authentication-types";
+} from "../../routes/auth/authentication-types.js";
 import {
   logInWithUsernameAndPassword,
   signUpWithUsernameAndPassword,
-} from "../../routes/auth/authentication-controller";
+} from "../../routes/auth/authentication-controller.js";
 
 export const authenticationRoutes = new Hono();
 

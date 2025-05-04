@@ -4,7 +4,7 @@ import {
   type GetMeResult,
   type GetUsersResult,
   GetUsersError,
-} from "./user-types";
+} from "./user-types.js";
 
 export const GetMe = async (parameters: {
   userId: string;

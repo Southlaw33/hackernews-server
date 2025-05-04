@@ -1,9 +1,9 @@
 import { Hono } from "hono";
-import { GetUsers, GetMe } from "./user-controllers";
-import { GetUsersError, GetMeError } from "./user-types";
-import { getPagination } from "../../extras/pagination";
-import { sessionMiddleware } from "../middlewares/session-middleware";
-import { prismaClient } from "../../integrations/prisma/index";
+import { GetUsers, GetMe } from "./user-controllers.js";
+import { GetUsersError, GetMeError } from "./user-types.js";
+import { getPagination } from "../../extras/pagination.js";
+import { sessionMiddleware } from "../middlewares/session-middleware.js";
+import { prismaClient } from "../../integrations/prisma/index.js";
 export const usersRoutes = new Hono();
 
 usersRoutes.all("/me", sessionMiddleware, async (context) => {

@@ -5,7 +5,7 @@ import {
   type LogInWithUsernameAndPasswordResult,
   type SignUpWithUsernameAndPasswordResult,
 } from "./authentication-types";
-import { prismaClient as prisma } from "../../integrations/prisma/index";
+import { prismaClient as prisma } from "../../integrations/prisma/index.js";
 
 export const createPasswordHash = (parameters: {
   password: string;

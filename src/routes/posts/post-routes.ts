@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { sessionMiddleware } from "../middlewares/session-middleware";
+import { sessionMiddleware } from "../middlewares/session-middleware.js";
 import {
   GetPosts,
   GetUserPosts,
@@ -8,14 +8,14 @@ import {
   GetPostById,
   GetUserPostsBySlug,
   SearchPosts,
-} from "./post-controllers";
+} from "./post-controllers.js";
 import {
   GetPostsError,
   CreatePostError,
   DeletePostError,
   GetPostByIdError,
   SearchPostsError,
-} from "./post-types";
+} from "./post-types.js";
 import { getPagination } from "../../extras/pagination";
 
 export const postsRoutes = new Hono();

@@ -1,4 +1,4 @@
-import { prismaClient as prisma } from "../../integrations/prisma/index";
+import { prismaClient as prisma } from "../../integrations/prisma/index.js";
 import {
   GetCommentsError,
   CreateCommentError,
@@ -12,7 +12,7 @@ import {
   GetCommentsOnMeError,
   GetCommentsOnUserError,
   type GetCommentsOnUserResult,
-} from "../comments/comment-types";
+} from "../comments/comment-types.js";
 
 export const GetComments = async (parameters: {
   postId: string;

@@ -1,5 +1,5 @@
 import type { Context } from "hono";
-import { prismaClient as prisma } from "../../integrations/prisma/index";
+import { prismaClient as prisma } from "../../integrations/prisma/index.js";
 import {
   GetPostsError,
   CreatePostError,
@@ -15,7 +15,7 @@ import {
   GetUserPostsBySlugError,
   SearchPostsError,
   type SearchPostsResult,
-} from "./post-types";
+} from "./post-types.js";
 
 export const GetPosts = async (parameter: {
   page: number;

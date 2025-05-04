@@ -1,10 +1,10 @@
 import { Hono } from "hono";
-import { authenticationRoutes } from "./auth/auth-routes";
-import { usersRoutes } from "./users/user-routes";
-import { postsRoutes } from "./posts/post-routes";
-import { likesRoutes } from "./likes/like-routes";
-import { commentsRoutes } from "./comments/comment-routes";
-import { authRoute } from "./middlewares/session-middleware";
+import { authenticationRoutes } from "./auth/auth-routes.js";
+import { usersRoutes } from "./users/user-routes.js";
+import { postsRoutes } from "./posts/post-routes.js";
+import { likesRoutes } from "./likes/like-routes.js";
+import { commentsRoutes } from "./comments/comment-routes.js";
+import { authRoute } from "./middlewares/session-middleware.js";
 import { cors } from "hono/cors";
 
 // Adjust the origin to match your frontend URL (3001 or 4000)

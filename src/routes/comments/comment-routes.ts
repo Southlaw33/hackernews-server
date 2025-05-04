@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { sessionMiddleware } from "../middlewares/session-middleware";
+import { sessionMiddleware } from "../middlewares/session-middleware.js";
 import {
   GetComments,
   CreateComment,
@@ -8,7 +8,7 @@ import {
   GetCommentsOnPosts,
   GetCommentsOnMe,
   GetCommentsOnUser,
-} from "../comments/comment-controllers";
+} from "../comments/comment-controllers.js";
 import {
   GetCommentsError,
   CreateCommentError,
@@ -17,8 +17,8 @@ import {
   GetCommentsOnPostsError,
   GetCommentsOnMeError,
   GetCommentsOnUserError,
-} from "../comments/comment-types";
-import { getPagination } from "../../extras/pagination";
+} from "../comments/comment-types.js";
+import { getPagination } from "../../extras/pagination.js";
 export const commentsRoutes = new Hono();
 
 commentsRoutes.get("/on/:postId", async (c) => {

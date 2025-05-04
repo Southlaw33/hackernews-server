@@ -5,4 +5,3 @@ import { allRoutes } from "./routes/routes.js";
 serve(allRoutes, (info) => {
   console.log(`SERVER RUNNING ON PORT ${info.port}`);
 });
-

@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { type Session, type User } from "better-auth";
 import { createMiddleware } from "hono/factory";
-import betterAuthServerClient from "../../integrations/better-auth/better-auth";
+import betterAuthServerClient from "../../integrations/better-auth/better-auth.js";
 
 export const authRoute = new Hono();
 
