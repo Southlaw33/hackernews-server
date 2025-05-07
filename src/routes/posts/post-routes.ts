@@ -16,7 +16,7 @@ import {
   GetPostByIdError,
   SearchPostsError,
 } from "./post-types.js";
-import { getPagination } from "../../extras/pagination";
+import { getPagination } from "../../extras/pagination.js";
 
 export const postsRoutes = new Hono();
 
