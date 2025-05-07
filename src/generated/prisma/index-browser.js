@@ -120,40 +120,37 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  username: 'username',
+  displayUsername: 'displayUsername',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  username: 'username',
   email: 'email',
   emailVerified: 'emailVerified',
-  image: 'image',
-  displayUsername: 'displayUsername',
-  about: 'about'
+  image: 'image'
 };
 
 exports.Prisma.PostScalarFieldEnum = {
   id: 'id',
   title: 'title',
   content: 'content',
-  userId: 'userId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  userId: 'userId'
 };
 
 exports.Prisma.LikeScalarFieldEnum = {
   id: 'id',
-  postId: 'postId',
-  userId: 'userId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  postId: 'postId',
+  userId: 'userId'
 };
 
 exports.Prisma.CommentScalarFieldEnum = {
   id: 'id',
   content: 'content',
-  postId: 'postId',
-  userId: 'userId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  postId: 'postId',
+  userId: 'userId'
 };
 
 exports.Prisma.SessionScalarFieldEnum = {

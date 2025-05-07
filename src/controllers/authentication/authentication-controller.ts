@@ -4,8 +4,8 @@ import {
   SignUpWithUsernameAndPasswordError,
   type LogInWithUsernameAndPasswordResult,
   type SignUpWithUsernameAndPasswordResult,
-} from "./authentication-types.js";
-import { prismaClient as prisma } from "../../integrations/prisma/index.js";
+} from "./authentication-types";
+import { prismaClient as prisma } from "../../integrations/prisma";
 
 export const createPasswordHash = (parameters: {
   password: string;

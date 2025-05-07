@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -13,54 +12,56 @@ datasource db {
 model User {
   id              String    @id @default(uuid())
   name            String?
+  username        String    @unique
+  displayUsername String
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
-  username        String    @unique
+  posts           Post[]
+  Like            Like[]
+  Comment         Comment[]
   email           String    @unique
   emailVerified   Boolean
   image           String?
-  displayUsername String
-  about           String?
-  accounts        Account[]
-  comments        Comment[]
-  likes           Like[]
-  posts           Post[]
   sessions        Session[]
+  accounts        Account[]
 }
 
 model Post {
   id        String    @id @default(uuid())
   title     String
   content   String
-  userId    String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  comments  Comment[]
-  likes     Like[]
+  userId    String
   author    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Like      Like[]
+  Comment   Comment[]
 }
 
 model Like {
   id        String   @id @default(uuid())
-  postId    String
-  userId    String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
 
+  // Prevents multiple likes by the same user on the same post
+  // Index on postId for quick lookups of likes by post
+  // Index on userId for quick lookups of likes by user
   @@unique([postId, userId])
+  @@index([postId])
+  @@index([userId])
 }
 
 model Comment {
   id        String   @id @default(uuid())
   content   String
-  postId    String?
-  userId    String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
 }
 
 model Session {
@@ -80,6 +81,7 @@ model Account {
   accountId             String
   providerId            String
   userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
   idToken               String?
@@ -89,7 +91,6 @@ model Account {
   password              String?
   createdAt             DateTime
   updatedAt             DateTime
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Verification {
