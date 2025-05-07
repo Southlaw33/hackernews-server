@@ -1693,7 +1693,7 @@ export namespace Prisma {
     email: string
     emailVerified: boolean
     image: string | null
-    displayUsername: string | null
+    displayUsername: string
     about: string | null
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
@@ -1802,7 +1802,7 @@ export namespace Prisma {
       email: string
       emailVerified: boolean
       image: string | null
-      displayUsername: string | null
+      displayUsername: string
       about: string | null
     }, ExtArgs["result"]["user"]>
     composites: {}
@@ -9531,7 +9531,7 @@ export namespace Prisma {
     email?: StringFilter<"User"> | string
     emailVerified?: BoolFilter<"User"> | boolean
     image?: StringNullableFilter<"User"> | string | null
-    displayUsername?: StringNullableFilter<"User"> | string | null
+    displayUsername?: StringFilter<"User"> | string
     about?: StringNullableFilter<"User"> | string | null
     accounts?: AccountListRelationFilter
     comments?: CommentListRelationFilter
@@ -9549,7 +9549,7 @@ export namespace Prisma {
     email?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrderInput | SortOrder
-    displayUsername?: SortOrderInput | SortOrder
+    displayUsername?: SortOrder
     about?: SortOrderInput | SortOrder
     accounts?: AccountOrderByRelationAggregateInput
     comments?: CommentOrderByRelationAggregateInput
@@ -9570,7 +9570,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     emailVerified?: BoolFilter<"User"> | boolean
     image?: StringNullableFilter<"User"> | string | null
-    displayUsername?: StringNullableFilter<"User"> | string | null
+    displayUsername?: StringFilter<"User"> | string
     about?: StringNullableFilter<"User"> | string | null
     accounts?: AccountListRelationFilter
     comments?: CommentListRelationFilter
@@ -9588,7 +9588,7 @@ export namespace Prisma {
     email?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrderInput | SortOrder
-    displayUsername?: SortOrderInput | SortOrder
+    displayUsername?: SortOrder
     about?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -9607,7 +9607,7 @@ export namespace Prisma {
     email?: StringWithAggregatesFilter<"User"> | string
     emailVerified?: BoolWithAggregatesFilter<"User"> | boolean
     image?: StringNullableWithAggregatesFilter<"User"> | string | null
-    displayUsername?: StringNullableWithAggregatesFilter<"User"> | string | null
+    displayUsername?: StringWithAggregatesFilter<"User"> | string
     about?: StringNullableWithAggregatesFilter<"User"> | string | null
   }
 
@@ -10030,7 +10030,7 @@ export namespace Prisma {
     email: string
     emailVerified: boolean
     image?: string | null
-    displayUsername?: string | null
+    displayUsername: string
     about?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -10048,7 +10048,7 @@ export namespace Prisma {
     email: string
     emailVerified: boolean
     image?: string | null
-    displayUsername?: string | null
+    displayUsername: string
     about?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -10066,7 +10066,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    displayUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    displayUsername?: StringFieldUpdateOperationsInput | string
     about?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -10084,7 +10084,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    displayUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    displayUsername?: StringFieldUpdateOperationsInput | string
     about?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -10102,7 +10102,7 @@ export namespace Prisma {
     email: string
     emailVerified: boolean
     image?: string | null
-    displayUsername?: string | null
+    displayUsername: string
     about?: string | null
   }
 
@@ -10115,7 +10115,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    displayUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    displayUsername?: StringFieldUpdateOperationsInput | string
     about?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -10128,7 +10128,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    displayUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    displayUsername?: StringFieldUpdateOperationsInput | string
     about?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -11914,7 +11914,7 @@ export namespace Prisma {
     email: string
     emailVerified: boolean
     image?: string | null
-    displayUsername?: string | null
+    displayUsername: string
     about?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -11931,7 +11931,7 @@ export namespace Prisma {
     email: string
     emailVerified: boolean
     image?: string | null
-    displayUsername?: string | null
+    displayUsername: string
     about?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -11996,7 +11996,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    displayUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    displayUsername?: StringFieldUpdateOperationsInput | string
     about?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -12013,7 +12013,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    displayUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    displayUsername?: StringFieldUpdateOperationsInput | string
     about?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -12055,7 +12055,7 @@ export namespace Prisma {
     email: string
     emailVerified: boolean
     image?: string | null
-    displayUsername?: string | null
+    displayUsername: string
     about?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -12072,7 +12072,7 @@ export namespace Prisma {
     email: string
     emailVerified: boolean
     image?: string | null
-    displayUsername?: string | null
+    displayUsername: string
     about?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -12136,7 +12136,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    displayUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    displayUsername?: StringFieldUpdateOperationsInput | string
     about?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -12153,7 +12153,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    displayUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    displayUsername?: StringFieldUpdateOperationsInput | string
     about?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -12195,7 +12195,7 @@ export namespace Prisma {
     email: string
     emailVerified: boolean
     image?: string | null
-    displayUsername?: string | null
+    displayUsername: string
     about?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     likes?: LikeCreateNestedManyWithoutUserInput
@@ -12212,7 +12212,7 @@ export namespace Prisma {
     email: string
     emailVerified: boolean
     image?: string | null
-    displayUsername?: string | null
+    displayUsername: string
     about?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     likes?: LikeUncheckedCreateNestedManyWithoutUserInput
@@ -12276,7 +12276,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    displayUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    displayUsername?: StringFieldUpdateOperationsInput | string
     about?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     likes?: LikeUpdateManyWithoutUserNestedInput
@@ -12293,7 +12293,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    displayUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    displayUsername?: StringFieldUpdateOperationsInput | string
     about?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     likes?: LikeUncheckedUpdateManyWithoutUserNestedInput
@@ -12310,7 +12310,7 @@ export namespace Prisma {
     email: string
     emailVerified: boolean
     image?: string | null
-    displayUsername?: string | null
+    displayUsername: string
     about?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -12327,7 +12327,7 @@ export namespace Prisma {
     email: string
     emailVerified: boolean
     image?: string | null
-    displayUsername?: string | null
+    displayUsername: string
     about?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -12360,7 +12360,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    displayUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    displayUsername?: StringFieldUpdateOperationsInput | string
     about?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -12377,7 +12377,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    displayUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    displayUsername?: StringFieldUpdateOperationsInput | string
     about?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -12394,7 +12394,7 @@ export namespace Prisma {
     email: string
     emailVerified: boolean
     image?: string | null
-    displayUsername?: string | null
+    displayUsername: string
     about?: string | null
     comments?: CommentCreateNestedManyWithoutUserInput
     likes?: LikeCreateNestedManyWithoutUserInput
@@ -12411,7 +12411,7 @@ export namespace Prisma {
     email: string
     emailVerified: boolean
     image?: string | null
-    displayUsername?: string | null
+    displayUsername: string
     about?: string | null
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
     likes?: LikeUncheckedCreateNestedManyWithoutUserInput
@@ -12444,7 +12444,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    displayUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    displayUsername?: StringFieldUpdateOperationsInput | string
     about?: NullableStringFieldUpdateOperationsInput | string | null
     comments?: CommentUpdateManyWithoutUserNestedInput
     likes?: LikeUpdateManyWithoutUserNestedInput
@@ -12461,7 +12461,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     image?: NullableStringFieldUpdateOperationsInput | string | null
-    displayUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    displayUsername?: StringFieldUpdateOperationsInput | string
     about?: NullableStringFieldUpdateOperationsInput | string | null
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
     likes?: LikeUncheckedUpdateManyWithoutUserNestedInput

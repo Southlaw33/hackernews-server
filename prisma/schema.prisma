@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -18,7 +19,7 @@ model User {
   email           String    @unique
   emailVerified   Boolean
   image           String?
-  displayUsername String?
+  displayUsername String
   about           String?
   accounts        Account[]
   comments        Comment[]
