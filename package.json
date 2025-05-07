@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch dotenv/config src/index.ts",
+    "dev": "tsx watch -r dotenv/config src/index.ts",
     "build": "tsc -p tsconfig.build.json",
     "start": "node dist/index.js"
   },
