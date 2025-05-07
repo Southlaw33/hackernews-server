@@ -2,8 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "noEmit": false,
-    "module": "CommonJS",
-    "target": "ES2020",
+    "module": "ESNext",
+    "target": "ES2022",
     "outDir": "dist",
     "moduleResolution": "node",
     "allowImportingTsExtensions": false,
