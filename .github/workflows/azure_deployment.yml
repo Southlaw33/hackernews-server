@@ -10,7 +10,7 @@ env:
   RESOURCE_GROUP: HackerNews
   CONTAINER_APPS_ENVIRONMENT: HackerNewsContainerAppsEnvironment
   LOG_ANALYTICS_WORKSPACE: HackerNewsLogAnalyticsWorkspace
-  ACR_REGISTRY: hackernews1si21ad064.azurecr.io
+  ACR_REGISTRY: hackernews1si21cs054.azurecr.io
   ACR_REPOSITORY_NAME: hackernews
   CONTAINER_APP_NAME: hackernews
   TARGET_PORT: 3000
@@ -154,4 +154,4 @@ jobs:
                 DIRECT_URL=${{ secrets.DIRECT_URL }} \
                 SERVER_URL=${{ secrets.SERVER_URL }} \
                 WEB_CLIENT_URL=${{ secrets.WEB_CLIENT_URL }} \
-                BETTER_AUTH_SECRET=${{ secrets.BETTER_AUTH_SECRET }}
+                BETTER_AUTH_SECRET=${{ secrets.BETTER_AUTH_SECRET }} 
